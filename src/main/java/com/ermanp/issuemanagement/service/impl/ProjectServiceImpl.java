@@ -1,8 +1,10 @@
 package com.ermanp.issuemanagement.service.impl;
 
+import com.ermanp.issuemanagement.dto.ProjectDto;
 import com.ermanp.issuemanagement.entity.Project;
 import com.ermanp.issuemanagement.repository.ProjectRepository;
 import com.ermanp.issuemanagement.service.ProjectService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,11 @@ import java.util.Optional;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final ModelMapper modelMapper;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, ModelMapper modelMapper) {
         this.projectRepository = projectRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -31,8 +35,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project getById(Long id) {
-        return null;
+    public ProjectDto getById(Long id) {
+        Project project = projectRepository.getOne(id);
+        ProjectDto projectDto = modelMapper.map(project, ProjectDto.class);
+        return projectDto;
     }
 
     @Override
