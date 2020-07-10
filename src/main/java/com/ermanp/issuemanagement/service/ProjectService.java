@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ProjectService {
 
-    Project save(Project project);
+    ProjectDto save(ProjectDto project);
 
     ProjectDto getById(Long id);
 
@@ -18,4 +18,10 @@ public interface ProjectService {
     List<Project> getByProjectCodeContains(String projectCode);
 
     Boolean delete(Project project);
+
+    Project getByProjectCode(String projectCode);
+
+    ProjectDto update(Long id, ProjectDto project);
+
+    List<ProjectDto> getAll();
 }

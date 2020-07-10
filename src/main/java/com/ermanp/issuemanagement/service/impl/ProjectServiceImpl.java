@@ -24,14 +24,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project save(Project project) {
-        try {
-            Optional.of(project)
-                    .map(Project::getProjectName);
-        }catch (Exception e){
-            throw new IllegalArgumentException("Project code cannot be null!");
+    public ProjectDto save(ProjectDto project) {
+        Project projectCheck = getByProjectCode(project.getProjectCode());
+        if(projectCheck != null){
+            throw new IllegalArgumentException("Project Code Already Exist");
         }
-        return projectRepository.save(project);
+
+        Project p = modelMapper.map(project, Project.class);
+        p = projectRepository.save(p);
+        project.setId(p.getId());
+        return project;
     }
 
     @Override
@@ -55,4 +57,37 @@ public class ProjectServiceImpl implements ProjectService {
     public Boolean delete(Project project) {
         return null;
     }
+
+    public Boolean delete(Long id) {
+        projectRepository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public Project getByProjectCode(String projectCode) {
+        return projectRepository.getByProjectCode(projectCode);
+    }
+
+    @Override
+    public ProjectDto update(Long id, ProjectDto project) {
+        Project projectDb = projectRepository.getOne(id);
+        if (projectDb == null)
+            throw new IllegalArgumentException("Project Does Not Exist ID:" + id);
+
+        Project projectCheck = projectRepository.getByProjectCodeAndIdNot(project.getProjectCode(), id);
+        if (projectCheck != null)
+            throw new IllegalArgumentException("Project Code Already Exist");
+
+        projectDb.setProjectCode(project.getProjectCode());
+        projectDb.setProjectName(project.getProjectName());
+
+        projectRepository.save(projectDb);
+        return modelMapper.map(projectDb, ProjectDto.class);
+    }
+
+    @Override
+    public List<ProjectDto> getAll() {
+        return null;
+    }
+
 }
